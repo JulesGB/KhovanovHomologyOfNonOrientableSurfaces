@@ -4,10 +4,13 @@ import regina.engine
 def R1(link, arc_idx, strand_idx=0, sign=1):
     """
     Create a new link with a left/right R1 move performed on a given arc.
-    link : a link
-    arc_idx : idx indicating the arc of the given component
-    strand_idx : idx indicating component of link, default 0
-    sign : sign of new crossing (either -1 or 1), default 1
+    Args:
+        link : a link
+        arc_idx : idx indicating the arc of the given component
+        strand_idx : idx indicating component of link, default 0
+        sign : sign of new crossing (either -1 or 1), default 1
+    Returns:
+        A sage link
     """
     
     # convert to regina link
