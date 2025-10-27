@@ -1,12 +1,15 @@
 import sage.knots
 import regina.engine
 
-# R1: Create a new link with a left/right R1 move on a given strand
-# link : a link
-# arc_idx : idx indicating the arc of the given component
-# strand_idx : idx indicating component of link, default 0
-# sign : sign of new crossing (either -1 or 1), defaul 1
 def R1(link, arc_idx, strand_idx=0, sign=1):
+    """
+    Create a new link with a left/right R1 move performed on a given arc.
+    link : a link
+    arc_idx : idx indicating the arc of the given component
+    strand_idx : idx indicating component of link, default 0
+    sign : sign of new crossing (either -1 or 1), default 1
+    """
+    
     # convert to regina link
     rlink = regina.Link.fromPD(link.pd_code())
 
@@ -25,13 +28,13 @@ def R1(link, arc_idx, strand_idx=0, sign=1):
     #convert back to sage link
     return sage.knots.link.Link(rlink.pdData())
 
-def R2(link, edge1, edge2):
+def R2(link, arc1, arc2):
 
     # TODO - implement
 
     return
 
-def R3(link, edge1, ):
+def R3(link):
 
     # TODO - implement
 
