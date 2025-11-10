@@ -1,5 +1,7 @@
-from sage.knots import Link
+from sage.knots.link import Link
 
-@add_method(Link)
-def plot(arc_nums=True):
+def plot(self, arc_nums=True):
     return
+
+# Add plot signature to Link methods
+setattr(Link, 'plot', plot)
