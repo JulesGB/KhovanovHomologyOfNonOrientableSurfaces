@@ -4,7 +4,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 
-def adjacency_graph(knot: Link):
+def adjacency_graph(knot: Link, rad_increment=0.15):
     crossing_labels = [c.label for c in knot.crossings]
     G = nx.MultiDiGraph()
     G.add_nodes_from(crossing_labels)
@@ -32,14 +32,14 @@ def adjacency_graph(knot: Link):
             G.edges[u,v,0]['rad'] = 0
         else:
             edge_keys = G.get_edge_data(u,v)
-            possible_rads = [0.15, 0.3, 0.45, 0.6]
+            possible_rads = [(i+1) * rad_increment for i in range(4)]
             for i,k in zip(range(len(edge_keys)), edge_keys):
                 G.edges[u,v,k]['rad'] = (-1)**i * possible_rads[i//2]
         
     return G
     
-def draw_adjacency_graph(knot: Link):
-    G = adjacency_graph(knot)
+def draw_adjacency_graph(knot: Link, head_pos=0.1, tail_pos=0.9, rad_increment=0.15):
+    G = adjacency_graph(knot, rad_increment=rad_increment)
     #layout = nx.spring_layout(G)
     layout = nx.planar_layout(G)
     
@@ -54,15 +54,18 @@ def draw_adjacency_graph(knot: Link):
                     for u,v,k, attrs in G.edges(keys=True, data=True)}
 
     nx.draw_networkx_nodes(G, pos=layout)
-    nx.draw_networkx_edges(G, pos=layout, arrowsize=0.00001, connectionstyle=connectionstyle)
-
-    my_draw_networkx_edge_labels(G, pos=layout, label_pos=0.1,
-                                 bbox={"alpha": 0}, font_color='r', rotate=False,
-                                 edge_labels=head_strands,  rad=rads)
-    my_draw_networkx_edge_labels(G, pos=layout, label_pos=0.9,
-                                 bbox={"alpha": 0}, font_color='r', rotate=False,
-                                 edge_labels=tail_strands,  rad=rads)
     nx.draw_networkx_labels(G, pos=layout)
+    nx.draw_networkx_edges(G, pos=layout,
+                           arrowsize=0.00001, connectionstyle=connectionstyle)
+
+    my_draw_networkx_edge_labels(G, edge_labels=head_strands,
+                                 pos=layout, label_pos=head_pos,
+                                 rad=rads, rad_increment=rad_increment,
+                                 bbox={"alpha": 0}, font_color='r', rotate=False)
+    my_draw_networkx_edge_labels(G, edge_labels=tail_strands,
+                                 pos=layout, label_pos=tail_pos,
+                                 rad=rads, rad_increment=rad_increment,
+                                 bbox={"alpha": 0}, font_color='r', rotate=False)
 
 # Adapted from the following:
 # Source - https://stackoverflow.com/a/70245742
@@ -84,7 +87,8 @@ def my_draw_networkx_edge_labels(
     ax=None,
     rotate=True,
     clip_on=True,
-    rad=0
+    rad=0,
+    rad_increment=0.15
 ):
     """Draw edge labels.
 
@@ -183,7 +187,7 @@ def my_draw_networkx_edge_labels(
         # get the rad for this particular edge
         my_rad = rad[n1,n2,k]
         if my_rad == 0:
-            my_rad = 0.15
+            my_rad = rad_increment
         
         ctrl_1 = linear_mid + my_rad*rotation_matrix@d_pos
         ctrl_mid_1 = 0.5*pos_1 + 0.5*ctrl_1
